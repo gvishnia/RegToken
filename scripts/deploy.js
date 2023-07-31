@@ -5,6 +5,7 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
+//console.log(hre);
 
 async function main() {
   const currentTimestampInSeconds = Math.round(Date.now() / 1000);
@@ -12,7 +13,7 @@ async function main() {
 
   const lockedAmount = hre.ethers.utils.parseEther("0.001");
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
+  const Lock = await hre.ethers.getContractFactory("RegToken");
   const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
 
   await lock.deployed();
