@@ -5,5 +5,6 @@
         string name;
         string symbol;
         string description;
-        int size;
+        uint256 size;
+        address owner;
     }
