@@ -4,9 +4,9 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Consecutive.sol";
-// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Wrapper.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 import "./Enums.sol";
 import "./RegMetaData.sol";
 import "hardhat/console.sol";
@@ -34,16 +34,16 @@ contract RegToken is ERC721, ERC721URIStorage, Ownable {
         onlyOwner returns (uint256)
     {
         uint256 newItemId = _tokenIdCounter.current();
-        console.log(newItemId);
+        console.log("current item for address %s id:%s",generator,newItemId);
         _mint(generator, newItemId);        
         updateMetaData(newItemId,name,symbol,description,size);
-        _tokenIdCounter.increment();
+        _tokenIdCounter.increment();        
         return newItemId;
     }
 
     function RegMetaDataToString(RegMetaData memory metaData) public  view returns (string memory) {       
         //console.log(string.concat("RegMetaDataToStrin --> name:",metaData.name, ", symbol:",metaData.symbol,", description:",metaData.description,", size:",Strings.toString(metaData.size)));
-        return string.concat("name:",metaData.name, ", symbol:",metaData.symbol,", description:",metaData.description,", size:",Strings.toString(metaData.size));
+        return string.concat("Address:",Strings.toHexString(uint160(metaData.owner), 20),"name:",metaData.name, ", symbol:",metaData.symbol,", description:",metaData.description,", size:",Strings.toString(metaData.size));
     }
 
     function updateMetaData(uint256 tokenId, string memory name, string  memory symbol, string memory description, uint256 size) public 
@@ -62,16 +62,27 @@ contract RegToken is ERC721, ERC721URIStorage, Ownable {
         
     }
 
-    function macthOrders(address pl1,uint256 pl1TokennId, address pl2,uint256 pl2TokennId) public
+    function macthOrders(address pl1,uint256 pl1TokennId, address pl2,uint256 pl2TokennId) public returns (bool)
     {
         console.log("Match");
         RegMetaData memory md1 = GetMetaData(pl1TokennId);
         RegMetaData memory md2 = GetMetaData(pl2TokennId);
         console.log(RegMetaDataToString(md1));
-        if(compare(md1.name,md2.name))
+        if(md1.owner != md2.owner)
         {
-            console.log("hrer");
+            console.log("ERROR Tokens are not on the same exchange.");
+            return false;
         }
+
+        uint fillSize = Math.min(md1.size,md2.size);
+        updatePartMetaData(pl1TokennId,pl1,md1.size-fillSize);
+        updatePartMetaData(pl2TokennId,pl2,md2.size-fillSize);
+        console.log(RegMetaDataToString(GetMetaData(pl1TokennId)));
+        console.log(RegMetaDataToString(GetMetaData(pl2TokennId)));
+       // transferFrom(md1.owner, pl1,pl1TokennId);    
+       // transferFrom(md2.owner, pl2,pl2TokennId);    
+
+        return true;
     }    
     function GetTokenCount() public view returns (uint)
     {

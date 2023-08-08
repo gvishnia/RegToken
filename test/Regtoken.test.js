@@ -7,11 +7,12 @@ describe("RegToken Contract", function () {
     async function deployRegTokenFixture() {
         const RegToken = await ethers.getContractFactory("RegToken");
         const regToken = await RegToken.deploy();
-        const [brokerA, exchangeA, brokerB,exchangeB ] = await ethers.getSigners();
-        await regToken.deployed();
+        const [brokerA, exchangeA, brokerB, exchangeB ] = await ethers.getSigners();
+        await regToken.deployed(); 
+        console.log(regToken)      ;
       //  const mintRgt = await  regToken.createRegToken(brokerA.address,"RegToken_0","RGT","First RegToken in collection",-1)
        // await mintRgt.wait();
-        return { regToken, brokerA, exchangeA, brokerB,exchangeB };
+        return { regToken, brokerA, exchangeA, brokerB, exchangeB };
     }
     it("1. Should  create mint a token and move it to exchange A", async function () {
         const { regToken, brokerA ,exchangeA} = await loadFixture(deployRegTokenFixture);
@@ -37,14 +38,27 @@ describe("RegToken Contract", function () {
         rgMt = await regToken.RegMetaDataToString(await regToken.GetMetaData(1));
         expect(await rgMt).to.equal(expectedMetadataPost);
     });
-    /*it("3. Should create mint two reg tokens send to the excahnge and match them, adding full audit", async function () {
-        const { regToken, brokerA ,exchangeA} = await loadFixture(deployRegTokenFixture);
-        const mintRgt = await  regToken.createRegToken(brokerA.address,"Vodafone","Vod.RGT","Buy Vodafone RGT",1000);
-        const mintRgt2 = await  regToken.createRegToken(brokerA.address,"Vodafone","Vod.RGT","Buy Vodafone RGT",500);
+    it("3. Should create mint two reg tokens send to the excahnge and match them, adding full audit", async function () {
+        const { regToken, brokerA ,exchangeA,brokerB,exchangeB} = await loadFixture(deployRegTokenFixture);
+        const mintRgtA = await  regToken.createRegToken(brokerA.address,"Vodafone","Vod.RGT","Buy Vodafone RGT",1000);
+        const mintRgtB = await  regToken.createRegToken(brokerB.address,"Vodafone","Vod.RGT","Sell Vodafone RGT",500);
+       // console.log("newItemId %s", await mintRgtA);
+        //console.log("newItemId mintRgtB %s", await mintRgtB);
+        expect(await regToken.balanceOf(await brokerA.getAddress())).to.equal(1);
+        expect(await regToken.balanceOf(await brokerB.getAddress())).to.equal(1);
+        expect(await regToken.balanceOf(await exchangeA.getAddress())).to.equal(0);
+
+        await regToken.transferFrom( await brokerA.getAddress(),await  exchangeA.getAddress(),1);
+       // await regToken.transferFrom( await brokerB.getAddress(),await  exchangeA.getAddress(),2);
+        //await regToken.transferFrom( await brokerA.getAddress(),await  exchangeA.getAddress(),1);
+        //await regToken.transferFrom( await brokerB.getAddress(),await  exchangeA.getAddress(),2);
         await regToken.macthOrders(brokerA.getAddress(),1, exchangeA.getAddress(),2);
-        //await regToken.match( brokerA.getAddress(),1, exchangeA.getAddress(),2);
+        //const rgMt = await regToken.RegMetaDataToString(await regToken.GetMetaData(1));
+       /// const rgMt2= await regToken.RegMetaDataToString(await regToken.GetMetaData(2));
+        //console.log(rgMt);
+        //console.log(rgMt2);
     });
-    it("4. Should have ne order status", async function () {
+    /*it("4. Should have ne order status", async function () {
         const { regToken, brokerA ,exchangeA} = await loadFixture(deployRegTokenFixture);
         //console.log("regToken:  %s",regToken);
         const rr = await regToken.orderStatus();
