@@ -24,7 +24,7 @@ describe("RegToken Contract", function () {
         await regToken.transferFrom( await brokerA.getAddress(),await  exchangeA.getAddress(),1);
         expect(await regToken.balanceOf(await brokerA.getAddress())).to.equal(0);
         expect(await regToken.balanceOf(await exchangeA.getAddress())).to.equal(1);
-        console.log("Balance after tranfter reg token: brokerA=%s, exchangeA=%s ",await regToken.balanceOf(await brokerA.getAddress()), await regToken.balanceOf(exchangeA.getAddress()));
+        console.log("Balance after transfer reg token: brokerA=%s, exchangeA=%s ",await regToken.balanceOf(await brokerA.getAddress()), await regToken.balanceOf(exchangeA.getAddress()));
     });
     
     it("2. Should create mint token and add to its meta data", async function () {
@@ -52,7 +52,7 @@ describe("RegToken Contract", function () {
        // await regToken.transferFrom( await brokerB.getAddress(),await  exchangeA.getAddress(),2);
         //await regToken.transferFrom( await brokerA.getAddress(),await  exchangeA.getAddress(),1);
         //await regToken.transferFrom( await brokerB.getAddress(),await  exchangeA.getAddress(),2);
-        await regToken.macthOrders(brokerA.getAddress(),1, exchangeA.getAddress(),2);
+        await regToken.matchOrders(brokerA.getAddress(),1, exchangeA.getAddress(),2);
         //const rgMt = await regToken.RegMetaDataToString(await regToken.GetMetaData(1));
        /// const rgMt2= await regToken.RegMetaDataToString(await regToken.GetMetaData(2));
         //console.log(rgMt);

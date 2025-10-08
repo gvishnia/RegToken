@@ -19,8 +19,7 @@ contract RegToken is ERC721, ERC721URIStorage, Ownable {
 
     Counters.Counter private _tokenIdCounter;
     OrderStatus public orderStatus;
-    string public side;
-    string public stam;
+    string public side;    
     address _owner;
 
     constructor() ERC721("RegToken", "RGT")
@@ -62,7 +61,7 @@ contract RegToken is ERC721, ERC721URIStorage, Ownable {
         
     }
 
-    function macthOrders(address pl1,uint256 pl1TokennId, address pl2,uint256 pl2TokennId) public returns (bool)
+    function matchOrders(address pl1,uint256 pl1TokennId, address pl2,uint256 pl2TokennId) public returns (bool)
     {
         console.log("Match");
         RegMetaData memory md1 = GetMetaData(pl1TokennId);
@@ -131,8 +130,8 @@ contract RegToken is ERC721, ERC721URIStorage, Ownable {
 
     function tokenValidation() private returns (bool result)
     {
-         require(orderStatus != OrderStatus.NULL, "Order stats must be filled");
-         require(compare(side,"") , "Side must be filled");
+         require(orderStatus != OrderStatus.NULL, "Order status must not be blank");
+         require(compare(side,"") , "Side must not be blank");
          return true;
     }
 
