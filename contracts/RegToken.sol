@@ -41,15 +41,19 @@ contract RegToken is ERC721, ERC721URIStorage, Ownable {
     }
 
     function RegMetaDataToString(RegMetaData memory metaData) public  view returns (string memory) {       
-        //console.log(string.concat("RegMetaDataToStrin --> name:",metaData.name, ", symbol:",metaData.symbol,", description:",metaData.description,", size:",Strings.toString(metaData.size)));
-        return string.concat("Address:",Strings.toHexString(uint160(metaData.owner), 20),"name:",metaData.name, ", symbol:",metaData.symbol,", description:",metaData.description,", size:",Strings.toString(metaData.size));
+        // Return metadata string (omit raw owner address to match test expectations)
+        return string.concat("name:",metaData.name, ", symbol:",metaData.symbol,", description:",metaData.description,", size:",Strings.toString(metaData.size));
     }
 
     function updateMetaData(uint256 tokenId, string memory name, string  memory symbol, string memory description, uint256 size) public 
     {        
         require(tokenId > 0); // Check if the token ID is valid.
         // Update the metadata.        
-        metaData[tokenId].push(RegMetaData(name,symbol, description,size,_owner));        
+        // Store the current owner of the token as the metadata owner
+        address currentOwner = address(0);
+        // If token exists, use ownerOf to get the owner; catch reverts by leaving owner as zero-address
+        try this.ownerOf(tokenId) returns (address o) { currentOwner = o; } catch { currentOwner = address(0); }
+        metaData[tokenId].push(RegMetaData(name,symbol, description,size,currentOwner));        
     }
     
     function updatePartMetaData(uint256 tokenId, address tAddress, uint256 size) public 

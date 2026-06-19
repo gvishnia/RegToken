@@ -23,7 +23,7 @@ describe("RegToken Contract", function () {
         console.log("Balance after mint new reg token: brokerA=%s, exchangeA=%s ",await regToken.balanceOf(await brokerA.getAddress()), await regToken.balanceOf(exchangeA.getAddress()));
         await regToken.transferFrom( await brokerA.getAddress(),await  exchangeA.getAddress(),1);
         expect(await regToken.balanceOf(await brokerA.getAddress())).to.equal(0);
-        expect(await regToken.balanceOf(await exchangeA.getAddress())).to.equal(1);
+        expect(await regToken.balanceOf(await exchangeA.getAddress())).to.equal("1");
         console.log("Balance after transfer reg token: brokerA=%s, exchangeA=%s ",await regToken.balanceOf(await brokerA.getAddress()), await regToken.balanceOf(exchangeA.getAddress()));
     });
     
